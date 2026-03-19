@@ -1,0 +1,288 @@
+<script lang="ts">
+  import * as Drawer from "$lib/components/ui/drawer/index";
+  import ScratchToReveal from "./lib/components/ScratchToReveal.svelte";
+  import Confetti from "./lib/components/Confetti.svelte";
+  import { Button } from "$lib/components/ui/button/index.js";
+  import { Input } from "$lib/components/ui/input/index.js";
+  import { Label } from "$lib/components/ui/label/index.js";
+  import { createWebHaptics } from "web-haptics/svelte";
+  import { HugeiconsIcon } from "@hugeicons/svelte";
+  import { Settings03Icon } from "@hugeicons/core-free-icons";
+  import { Cancel01Icon } from "@hugeicons/core-free-icons";
+  import { ReloadIcon } from "@hugeicons/core-free-icons";
+  import opor from "./assets/opor-8-bit.png";
+  import ketupat from "./assets/ketupat-8-bit.png";
+
+  const haptic = createWebHaptics();
+
+  // Settings state
+  let amounts = $state<number[]>([5000, 10000, 20000, 50000]);
+  let greetingInput = $state("THR untuk kamu!");
+  let amountInput = $state("");
+  let amountError = $state("");
+  let drawerOpen = $state(false);
+
+  // Card state
+  let reward = $state(pickReward());
+  let revealed = $state(false);
+  let showConfetti = $state(false);
+  let isShaking = $state(false);
+  let cardKey = $state(0);
+
+  function pickReward(): number {
+    if (amounts.length === 0) return 0;
+    return amounts[Math.floor(Math.random() * amounts.length)];
+  }
+
+  function formatIDR(val: number) {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(val);
+  }
+
+  // Settings actions
+  function addAmount() {
+    const val = parseInt(amountInput.replace(/\D/g, ""));
+    if (!val || val <= 0) {
+      amountError = "Please enter a valid amount.";
+      haptic.trigger("error");
+      return;
+    }
+    if (amounts.includes(val)) {
+      amountError = "That amount already exists.";
+      haptic.trigger("error");
+      return;
+    }
+    amounts = [...amounts, val].sort((a, b) => a - b);
+    amountInput = "";
+    amountError = "";
+    haptic.trigger("success");
+  }
+
+  function removeAmount(a: number) {
+    amounts = amounts.filter((x) => x !== a);
+    haptic.trigger("light");
+  }
+
+  function handleAmountKey(e: KeyboardEvent) {
+    if (e.key === "Enter") addAmount();
+  }
+
+  function openSettings() {
+    haptic.trigger("light");
+    drawerOpen = true;
+  }
+
+  function saveAndClose() {
+    haptic.trigger("success");
+    drawerOpen = false;
+    setTimeout(resetCard, 300);
+  }
+
+  function resetCard() {
+    revealed = false;
+    showConfetti = false;
+    isShaking = false;
+    reward = pickReward();
+    cardKey += 1;
+  }
+
+  function onScratchComplete() {
+    revealed = true;
+    showConfetti = true;
+
+    isShaking = true;
+    haptic.trigger("heavy");
+    const burstTimes = [120, 240, 360, 480, 600, 720, 840, 960];
+    burstTimes.forEach((ms) => setTimeout(() => haptic.trigger("heavy"), ms));
+    setTimeout(() => {
+      isShaking = false;
+    }, 1050);
+    setTimeout(() => (showConfetti = false), 4200);
+  }
+</script>
+
+<div
+  class="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
+>
+  <Button
+    variant="ghost"
+    size="icon-lg"
+    onclick={openSettings}
+    aria-label="Open settings"
+    class="size-12! absolute top-4 right-4 z-10 rounded-full"
+  >
+    <HugeiconsIcon
+      icon={Settings03Icon}
+      size={20}
+      strokeWidth={1.5}
+      class="size-4 sm:size-5"
+    />
+  </Button>
+
+  {#if showConfetti}
+    <Confetti />
+  {/if}
+
+  <div
+    class="w-fit sm:max-w-2xl flex max-sm:flex-col gap-16 p-6 sm:p-10 sm:items-center justify-between rounded-4xl bg-linear-to-br from-amber-300 via-amber-200 to-amber-400 {isShaking
+      ? 'animate-shake'
+      : ''}"
+    style="corner-shape: superellipse(-1);"
+  >
+    <div class="flex flex-col gap-4 max-sm:items-center max-sm:text-center">
+      <img
+        src={ketupat}
+        alt="Ketupat pixel art"
+        class="size-30 animate-float -ml-4"
+      />
+      <div class="flex flex-col gap-2">
+        <h1
+          class="text-4xl font-display font-bold bg-linear-to-br text-primary/80"
+        >
+          {greetingInput}
+        </h1>
+        <p class="text-sm text-primary/64">
+          Selamat hari raya Idul Fitri 1447 H
+        </p>
+      </div>
+    </div>
+
+    <!-- Scratch Card -->
+    <div class="relative">
+      {#if revealed}
+        <div
+          class="absolute inset-0 rounded-2xl animate-pulse-ring pointer-events-none"
+          style="border: 2px solid rgba(251,191,36,0.6); z-index: -1;"
+        ></div>
+      {/if}
+
+      {#key cardKey}
+        <ScratchToReveal
+          width={300}
+          height={300}
+          minScratchPercentage={55}
+          onComplete={onScratchComplete}
+        >
+          <!-- Revealed reward content -->
+          <div
+            class="w-full h-full flex flex-col gap-3 items-center justify-center rounded-xl relative"
+            style="background: linear-gradient(135deg, #F1FDE8 0%, #EDFDED 50%, #EAFDE8 100%);"
+          >
+            <div class="flex flex-col gap-2 text-center">
+              <div
+                class="absolute inset-4 rounded-lg pointer-events-none"
+                style="border: 1.5px solid rgba(251,191,36,0.3);"
+              ></div>
+              <div class="text-4xl">💰</div>
+              <p
+                class="text-emerald-700 text-xs font-semibold uppercase tracking-widest"
+              >
+                Your THR
+              </p>
+            </div>
+            <p
+              class="font-bold leading-tight text-center px-4 shimmer-text"
+              style="font-family: var(--font-display); font-size: 2.4rem;"
+            >
+              {formatIDR(reward)}
+            </p>
+          </div>
+        </ScratchToReveal>
+      {/key}
+    </div>
+  </div>
+  <!-- Post-reveal -->
+  {#if revealed}
+    <div
+      class="flex flex-col items-center gap-2 mt-6 text-center animate-pop-in"
+    >
+      <p class="text-lg font-semibold text-emerald-700">Wooohoooo!</p>
+      <p class="text-sm text-emerald-700/64">
+        May Allah shower His blessings on you.
+      </p>
+      <Button variant="outline" onclick={resetCard} class="mt-6 w-fit">
+        <HugeiconsIcon icon={ReloadIcon} size={40} strokeWidth={1.5} />
+        New Card
+      </Button>
+    </div>
+  {/if}
+
+  <p class="flex gap-1 absolute bottom-4 text-primary/40 text-xs">
+    made with opor <img src={opor} alt="Opor pixel art" class="size-4" /> ayam ©
+    2026
+  </p>
+</div>
+
+<Drawer.Root bind:open={drawerOpen} shouldScaleBackground>
+  <Drawer.Portal>
+    <Drawer.Content>
+      <div class="mx-auto w-full max-w-sm">
+        <Drawer.Header>
+          <Drawer.Title>Settings</Drawer.Title>
+          <Drawer.Description
+            >Customize your Eid scratch card</Drawer.Description
+          >
+        </Drawer.Header>
+        <div class="flex flex-col gap-6 p-4">
+          <div class="flex flex-col gap-2">
+            <Label>Greeting Message</Label>
+            <Input bind:value={greetingInput} placeholder="Eid Mubarak!" />
+          </div>
+
+          <!-- Reward pool -->
+          <div class="flex flex-col gap-2">
+            <Label>Reward Pool (IDR)</Label>
+
+            <div class="flex gap-2">
+              <Input
+                bind:value={amountInput}
+                onkeydown={handleAmountKey}
+                placeholder="e.g. 25000"
+                type="text"
+                inputmode="numeric"
+              />
+              <Button onclick={addAmount} variant="outline" size="lg"
+                >+ Add</Button
+              >
+            </div>
+
+            {#if amountError}
+              <p class="text-red-700 text-xs flex items-center gap-1">
+                {amountError}
+              </p>
+            {/if}
+
+            <!-- Amount chips -->
+            <div class="flex flex-wrap gap-2 pt-1">
+              {#each amounts as a (a)}
+                <button
+                  onclick={() => removeAmount(a)}
+                  class="transition-colors cursor-pointer"
+                  aria-label="Remove {formatIDR(a)}"
+                >
+                  <div
+                    class="flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold bg-secondary"
+                  >
+                    {formatIDR(a)}
+                    <HugeiconsIcon
+                      icon={Cancel01Icon}
+                      size={16}
+                      strokeWidth={1.5}
+                    />
+                  </div>
+                </button>
+              {/each}
+              {#if amounts.length === 0}
+                <p class="text-red-700 text-xs italic">No amounts yet.</p>
+              {/if}
+            </div>
+          </div>
+          <Button size="lg" onclick={saveAndClose}>Save and Apply</Button>
+        </div>
+      </div>
+    </Drawer.Content>
+  </Drawer.Portal>
+</Drawer.Root>
