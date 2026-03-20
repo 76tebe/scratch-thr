@@ -70,11 +70,17 @@
   let cardKey = $state(0);
 
   function pickReward(): number {
-    if (amounts.length === 0) return 0;
-    return amounts[Math.floor(Math.random() * amounts.length)];
+    const pool = amounts.length > 0 ? amounts : DEFAULT_AMOUNTS;
+    if (amounts.length === 0) {
+      amounts = [...DEFAULT_AMOUNTS];
+      saveAmounts(amounts);
+    };
+    const idx = Math.floor(Math.random() * pool.length);
+    return pool[idx] ?? DEFAULT_AMOUNTS[0];
   }
 
   function formatIDR(val: number) {
+    if (!Number.isFinite(val)) return "Rp0"
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
@@ -84,17 +90,21 @@
 
   // Settings actions
   function addAmount() {
-    const val = parseInt(amountInput.replace(/\D/g, ""));
-    if (!val || val <= 0) {
+    const digits = amountInput.replace(/\D/g, "").trim();
+    const val = digits.length > 0 ? parseInt(digits, 10) : NaN;
+
+    if (!Number.isFinite(val) || val <= 0) {
       amountError = "Masukkan nominal yang valid.";
       haptic.trigger("error");
       return;
     }
+
     if (amounts.includes(val)) {
       amountError = "Oops, nominal itu udah ada.";
       haptic.trigger("error");
       return;
     }
+
     amounts = [...amounts, val].sort((a, b) => a - b);
     amountInput = "";
     amountError = "";
@@ -267,7 +277,7 @@
   <LightRays color="rgba(232, 226, 173, 0.8)" class="-z-1 rotate-180"/>
 </div>
 
-<Drawer.Root bind:open={drawerOpen} dismissible={amounts.length === 0 ? false : true} shouldScaleBackground>
+<Drawer.Root bind:open={drawerOpen} shouldScaleBackground>
   <Drawer.Portal>
     <Drawer.Content>
       <div class="mx-auto w-full max-w-sm">
