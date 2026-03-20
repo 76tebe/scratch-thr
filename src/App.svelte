@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import * as Drawer from "$lib/components/ui/drawer/index";
   import ScratchToReveal from "./lib/components/ScratchToReveal.svelte";
   import Confetti from "./lib/components/Confetti.svelte";
@@ -18,6 +19,16 @@
   import backgroundOrnamentGold from "./assets/gradient-ornament-gold.svg";
 
   const haptic = createWebHaptics();
+
+  onMount(() => {
+    const root = document.documentElement;
+    function handleVisibility() {
+      root.style.animationPlayState =
+        document.hidden ? 'paused' : '';
+    }
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  });
 
   const STORAGE_KEY_AMOUNTS  = "thr_amounts";
   const STORAGE_KEY_GREETING = "thr_greeting";
@@ -144,9 +155,6 @@
   function onScratchComplete() {
     revealed = true;
     isShaking = true;
-    haptic.trigger("heavy");
-    const burstTimes = [120, 240, 360, 480, 600, 720, 840, 960];
-    burstTimes.forEach((ms) => setTimeout(() => haptic.trigger("heavy"), ms));
  
     setTimeout(() => {
       showConfetti = true;

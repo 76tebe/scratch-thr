@@ -9,14 +9,17 @@
     Math.random() * (max - min) + min;
 
   onMount(() => {
+    let interval: ReturnType<typeof setInterval> | null = null
+
     const initTimer = setTimeout(() => {
       const animationEnd = Date.now() + duration;
 
-      const interval = window.setInterval(() => {
+      interval = window.setInterval(() => {
         const timeLeft = animationEnd - Date.now();
 
         if (timeLeft <= 0) {
-          clearInterval(interval);
+          clearInterval(interval!);
+          interval = null;
           return;
         }
 
@@ -33,10 +36,14 @@
           origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
         });
       }, 250);
-
-      return () => clearInterval(interval);
     }, 0);
 
-    return () => clearTimeout(initTimer);
+    return () => {
+      clearTimeout(initTimer)
+      if (interval !== null) {
+        clearInterval(interval)
+        interval = null
+      }
+    }
   });
 </script>

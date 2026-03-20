@@ -182,7 +182,7 @@
       transparent            calc(var(--sweep-x) + 30%)
     );
     mix-blend-mode: screen;
+    will-change: opacity;
     animation: card-sweep 4.8s linear infinite;
-    will-change: --sweep-x;
   }
 </style>
