@@ -109,7 +109,7 @@
 </script>
 
 <div
-  class="min-h-screen flex flex-col items-center justify-center px-4 py-10 relative overflow-hidden"
+  class="min-h-screen flex flex-col gap-10 items-center justify-center px-4 py-10 relative overflow-hidden text-pretty"
 >
   <Button
     variant="ghost"
@@ -205,7 +205,7 @@
   <!-- Post-reveal -->
   {#if revealed}
     <div
-      class="flex flex-col items-center gap-2 mt-6 text-center animate-pop-in"
+      class="flex flex-col items-center gap-2 text-center animate-pop-in"
     >
       <p class="text-lg font-semibold">Yuuuhuuuuuu!</p>
       <p class="text-sm text-muted-foreground">
