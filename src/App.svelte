@@ -218,10 +218,10 @@
     </div>
   {/if}
 
-  <p class="flex gap-1 absolute bottom-4 text-primary/40 text-xs">
+  <a href="https://github.com/76tebe" target="_blank" class="flex gap-1 absolute bottom-4 text-primary/40 text-xs">
     made while eating opor <img src={opor} alt="Opor pixel art" class="size-4" /> ayam ©
     2026
-  </p>
+  </a>
   <LightRays color="rgba(173, 232, 176, 0.8)" class="-z-1" />
   <LightRays color="rgba(232, 226, 173, 0.8)" class="-z-1 rotate-180"/>
 </div>
