@@ -132,7 +132,7 @@
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillStyle = 'rgba(0,0,0,0.24)'
-    ctx.fillText('Scratch here', w / 2, h / 2)
+    ctx.fillText('Gosok disini', w / 2, h / 2)
     ctx.font = '12px "Plus Jakarta Sans", sans-serif'
   }
 

@@ -50,12 +50,12 @@
   function addAmount() {
     const val = parseInt(amountInput.replace(/\D/g, ""));
     if (!val || val <= 0) {
-      amountError = "Please enter a valid amount.";
+      amountError = "Masukkan nominal yang valid.";
       haptic.trigger("error");
       return;
     }
     if (amounts.includes(val)) {
-      amountError = "That amount already exists.";
+      amountError = "Oops, nominal itu udah ada.";
       haptic.trigger("error");
       return;
     }
@@ -131,7 +131,7 @@
   {/if}
 
   <div
-    class="w-fit sm:max-w-2xl flex max-sm:flex-col gap-10 sm:gap-16 p-6 sm:p-10 sm:items-center justify-between rounded-4xl bg-white border-3 border-white shadow-2xl/10 relative overflow-hidden {isShaking
+    class="w-fit sm:max-w-2xl flex max-sm:flex-col gap-10 sm:gap-16 p-6 sm:p-10 sm:items-center justify-between rounded-4xl bg-white border-3 border-white relative overflow-hidden {isShaking
       ? 'animate-shake'
       : ''}"
       style="corner-shape: superellipse(-1)"
@@ -156,7 +156,7 @@
         <h1 class="text-4xl font-display font-bold bg-linear-to-br">
           {greetingInput}
         </h1>
-        <p class="text-sm">Selamat hari raya Idul Fitri 1447 H</p>
+        <p class="text-sm text-muted-foreground">Selamat hari raya Idul Fitri 1447 H</p>
       </div>
     </div>
 
@@ -181,17 +181,15 @@
             class="w-full h-full flex flex-col gap-3 items-center justify-center rounded-xl relative"
             style="background: linear-gradient(135deg, #F1FDE8 0%, #EDFDED 50%, #EAFDE8 100%);"
           >
-            <div class="flex flex-col gap-2 text-center">
+            <div class="flex text-center">
               <div
                 class="absolute inset-4 rounded-lg pointer-events-none"
                 style="border: 1.5px solid rgba(251,191,36,0.3);"
               ></div>
-              <div class="text-4xl">💰</div>
-              <p
-                class="text-emerald-700 text-xs font-semibold uppercase tracking-widest"
-              >
-                Your THR
-              </p>
+              <div class="text-2xl">💰
+                <span class="text-4xl -mx-2">💰</span>
+                💰
+              </div>
             </div>
             <p
               class="font-bold leading-tight text-center px-4 shimmer-text"
@@ -209,19 +207,19 @@
     <div
       class="flex flex-col items-center gap-2 mt-6 text-center animate-pop-in"
     >
-      <p class="text-lg font-semibold">Wooohoooo!</p>
+      <p class="text-lg font-semibold">Yuuuhuuuuuu!</p>
       <p class="text-sm text-muted-foreground">
-        May Allah shower His blessings on you.
+        Semoga berkah dan menambah kebahagiaan di Hari Raya ✨
       </p>
       <Button variant="outline" onclick={resetCard} class="mt-6 w-fit">
         <HugeiconsIcon icon={ReloadIcon} size={40} strokeWidth={1.5} />
-        New Card
+        Buat Baru
       </Button>
     </div>
   {/if}
 
   <p class="flex gap-1 absolute bottom-4 text-primary/40 text-xs">
-    made with opor <img src={opor} alt="Opor pixel art" class="size-4" /> ayam ©
+    made while eating opor <img src={opor} alt="Opor pixel art" class="size-4" /> ayam ©
     2026
   </p>
   <LightRays color="rgba(173, 232, 176, 0.8)" class="-z-1" />
@@ -240,13 +238,13 @@
         </Drawer.Header>
         <div class="flex flex-col gap-6 p-4">
           <div class="flex flex-col gap-2">
-            <Label>Greeting Message</Label>
+            <Label>Ucapan</Label>
             <Input bind:value={greetingInput} placeholder="Eid Mubarak!" />
           </div>
 
           <!-- Reward pool -->
           <div class="flex flex-col gap-2">
-            <Label>Reward Pool (IDR)</Label>
+            <Label>Pool THR (IDR)</Label>
 
             <div class="flex gap-2">
               <Input
@@ -257,7 +255,7 @@
                 inputmode="numeric"
               />
               <Button onclick={addAmount} variant="outline" size="lg"
-                >+ Add</Button
+                >+ Tambah</Button
               >
             </div>
 
@@ -288,11 +286,11 @@
                 </button>
               {/each}
               {#if amounts.length === 0}
-                <p class="text-red-700 text-xs italic">No amounts yet.</p>
+                <p class="text-red-700 text-xs italic">Belum ada nominal.</p>
               {/if}
             </div>
           </div>
-          <Button size="lg" onclick={saveAndClose}>Save and Apply</Button>
+          <Button size="lg" onclick={saveAndClose}>Simpan</Button>
         </div>
       </div>
     </Drawer.Content>
