@@ -19,9 +19,45 @@
 
   const haptic = createWebHaptics();
 
+  const STORAGE_KEY_AMOUNTS  = "thr_amounts";
+  const STORAGE_KEY_GREETING = "thr_greeting";
+  const DEFAULT_AMOUNTS      = [5000, 10000, 20000, 50000];
+  const DEFAULT_GREETING     = "THR untuk kamu!";
+
+  function loadAmounts(): number[] {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_AMOUNTS);
+      if (!raw) return DEFAULT_AMOUNTS;
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.every((v) => typeof v === "number")) {
+        return parsed;
+      }
+    } catch {}
+    return DEFAULT_AMOUNTS;
+  }
+
+  function loadGreeting(): string {
+    try {
+      return localStorage.getItem(STORAGE_KEY_GREETING) ?? DEFAULT_GREETING;
+    } catch {}
+    return DEFAULT_GREETING;
+  }
+ 
+  function saveAmounts(val: number[]) {
+    try {
+      localStorage.setItem(STORAGE_KEY_AMOUNTS, JSON.stringify(val));
+    } catch {}
+  }
+ 
+  function saveGreeting(val: string) {
+    try {
+      localStorage.setItem(STORAGE_KEY_GREETING, val);
+    } catch {}
+  }
+
   // Settings state
-  let amounts = $state<number[]>([5000, 10000, 20000, 50000]);
-  let greetingInput = $state("THR untuk kamu!");
+  let amounts = $state<number[]>(loadAmounts());
+  let greetingInput = $state(loadGreeting());
   let amountInput = $state("");
   let amountError = $state("");
   let drawerOpen = $state(false);
@@ -80,6 +116,8 @@
   }
 
   function saveAndClose() {
+    saveAmounts(amounts);
+    saveGreeting(greetingInput);
     haptic.trigger("success");
     drawerOpen = false;
     setTimeout(resetCard, 300);
