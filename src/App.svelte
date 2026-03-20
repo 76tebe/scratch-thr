@@ -231,9 +231,9 @@
     <Drawer.Content>
       <div class="mx-auto w-full max-w-sm">
         <Drawer.Header>
-          <Drawer.Title>Settings</Drawer.Title>
+          <Drawer.Title>Pengaturan</Drawer.Title>
           <Drawer.Description
-            >Customize your Eid scratch card</Drawer.Description
+            >Sesuaikan kartu THR kamu</Drawer.Description
           >
         </Drawer.Header>
         <div class="flex flex-col gap-6 p-4">
