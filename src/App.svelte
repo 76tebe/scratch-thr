@@ -133,12 +133,15 @@
 
   function onScratchComplete() {
     revealed = true;
-    showConfetti = true;
-
     isShaking = true;
     haptic.trigger("heavy");
     const burstTimes = [120, 240, 360, 480, 600, 720, 840, 960];
     burstTimes.forEach((ms) => setTimeout(() => haptic.trigger("heavy"), ms));
+ 
+    setTimeout(() => {
+      showConfetti = true;
+    }, 100);
+ 
     setTimeout(() => {
       isShaking = false;
     }, 1050);

@@ -38,7 +38,7 @@
         sweepX = 110
         sweepPauseTimer = setTimeout(() => {
           isSweeping = true
-          runSweepLoop()
+          runSweep()
         }, 2400)
         return
       }
@@ -46,12 +46,9 @@
     }
   }
 
-  function runSweepLoop() {
-    runSweep()
-  }
-
   const haptic = createWebHaptics()
   let lastHapticMs = 0
+  let lastCheckMs = 0
 
   function getPos(e: MouseEvent | TouchEvent): { x: number; y: number } {
     const rect = canvasEl.getBoundingClientRect()
@@ -85,7 +82,10 @@
       onScratch?.()
     }
 
-    checkCompletion()
+    if (now - lastCheckMs > 150) {
+      lastCheckMs = now
+      checkCompletion()
+    }
   }
 
   function checkCompletion() {
@@ -99,8 +99,11 @@
       isComplete = true
       cancelAnimationFrame(sweepFrame)
       if (sweepPauseTimer) clearTimeout(sweepPauseTimer)
-      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
-      onComplete?.()
+
+      requestAnimationFrame(() => {
+        ctx!.clearRect(0, 0, canvasEl.width, canvasEl.height)
+        onComplete?.()
+      })
     }
   }
 
@@ -133,7 +136,6 @@
     ctx.textBaseline = 'middle'
     ctx.fillStyle = 'rgba(0,0,0,0.24)'
     ctx.fillText('Gosok disini', w / 2, h / 2)
-    ctx.font = '12px "Plus Jakarta Sans", sans-serif'
   }
 
   onMount(() => {
@@ -141,7 +143,7 @@
     drawOverlay()
     sweepPauseTimer = setTimeout(() => {
       isSweeping = true
-      runSweepLoop()
+      runSweep()
     }, 800)
     return () => {
       cancelAnimationFrame(sweepFrame)
