@@ -112,7 +112,6 @@ body {
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fbbf24' fill-opacity='0.04'%3E%3Cpath d='M30 0l2.4 7.4H40l-6.3 4.6 2.4 7.4L30 15l-6.1 4.4 2.4-7.4L20 7.4h7.6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Sweep flash — quick bright band, long pause, like the scratch card sheen */
 @property --shimmer-x {
   syntax: '<percentage>';
   inherits: false;
@@ -168,7 +167,6 @@ body {
 .animate-shake     { animation: shake 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
 
 .shimmer-text {
-  /* Base gold colour — visible between sweeps */
   background: linear-gradient(
     -45deg,
     #f59e0b                          calc(var(--shimmer-x) +   0%),
@@ -180,7 +178,6 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  /* 4s total: ~0.6s flash, ~3.4s pause */
   animation: shimmer-sweep 3.8s linear infinite;
 }
 

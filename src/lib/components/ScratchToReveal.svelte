@@ -22,29 +22,8 @@
 
   let canvasEl: HTMLCanvasElement
   let isScratching = false
-  let isComplete = false
+  let isComplete = $state(false)
   let ctx: CanvasRenderingContext2D | null = null
-
-  let sweepX = $state(110)
-  let sweepFrame: number
-  let sweepPauseTimer: ReturnType<typeof setTimeout> | null = null
-  let isSweeping = false
-
-  function runSweep() {
-    if (isSweeping) {
-      sweepX -= 2.8
-      if (sweepX < -120) {
-        isSweeping = false
-        sweepX = 110
-        sweepPauseTimer = setTimeout(() => {
-          isSweeping = true
-          runSweep()
-        }, 2400)
-        return
-      }
-      sweepFrame = requestAnimationFrame(runSweep)
-    }
-  }
 
   const haptic = createWebHaptics()
   let lastHapticMs = 0
@@ -97,8 +76,6 @@
     }
     if ((transparent / (data.length / 4)) * 100 >= minScratchPercentage) {
       isComplete = true
-      cancelAnimationFrame(sweepFrame)
-      if (sweepPauseTimer) clearTimeout(sweepPauseTimer)
 
       requestAnimationFrame(() => {
         ctx!.clearRect(0, 0, canvasEl.width, canvasEl.height)
@@ -141,13 +118,7 @@
   onMount(() => {
     ctx = canvasEl.getContext('2d', { willReadFrequently: true })!
     drawOverlay()
-    sweepPauseTimer = setTimeout(() => {
-      isSweeping = true
-      runSweep()
-    }, 800)
     return () => {
-      cancelAnimationFrame(sweepFrame)
-      if (sweepPauseTimer) clearTimeout(sweepPauseTimer)
       haptic.destroy()
     }
   })
@@ -168,24 +139,9 @@
     {@render children?.()}
   </div>
   <div
-    class="absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
+    class="sweep-layer absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
     style="opacity: {isComplete ? 0 : 1}; transition: opacity 0.4s ease; z-index: 2;"
-  >
-    <div
-      class="absolute inset-0"
-      style="
-        background: linear-gradient(
-          -45deg,
-          transparent            calc({sweepX}% +  0%),
-          rgba(255,255,255,0.45) calc({sweepX}% + 10%),
-          rgba(255,255,255,0.85) calc({sweepX}% + 15%),
-          rgba(255,255,255,0.45) calc({sweepX}% + 20%),
-          transparent            calc({sweepX}% + 30%)
-        );
-        mix-blend-mode: screen;
-      "
-    ></div>
-  </div>
+  ></div>
 
   <canvas
     bind:this={canvasEl}
@@ -202,3 +158,31 @@
     ontouchend={onTouchEnd}
   ></canvas>
 </div>
+
+<style>
+  @property --sweep-x {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 110%;
+  }
+ 
+  @keyframes card-sweep {
+    0%    { --sweep-x: 110%;  }
+    63.2% { --sweep-x: 110%;  }
+    100%  { --sweep-x: -120%; }
+  }
+ 
+  .sweep-layer {
+    background: linear-gradient(
+      -45deg,
+      transparent            calc(var(--sweep-x) +  0%),
+      rgba(255,255,255,0.35) calc(var(--sweep-x) + 10%),
+      rgba(255,255,255,0.90) calc(var(--sweep-x) + 15%),
+      rgba(255,255,255,0.35) calc(var(--sweep-x) + 20%),
+      transparent            calc(var(--sweep-x) + 30%)
+    );
+    mix-blend-mode: screen;
+    animation: card-sweep 4.8s linear infinite;
+    will-change: --sweep-x;
+  }
+</style>
