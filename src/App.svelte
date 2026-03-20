@@ -267,7 +267,7 @@
   <LightRays color="rgba(232, 226, 173, 0.8)" class="-z-1 rotate-180"/>
 </div>
 
-<Drawer.Root bind:open={drawerOpen} shouldScaleBackground>
+<Drawer.Root bind:open={drawerOpen} dismissible={amounts.length === 0 ? false : true} shouldScaleBackground>
   <Drawer.Portal>
     <Drawer.Content>
       <div class="mx-auto w-full max-w-sm">
