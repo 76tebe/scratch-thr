@@ -5,6 +5,7 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
   import { Label } from "$lib/components/ui/label/index.js";
+  import { LightRays } from "$lib/components/magic/light-rays";
   import { createWebHaptics } from "web-haptics/svelte";
   import { HugeiconsIcon } from "@hugeicons/svelte";
   import { Settings03Icon } from "@hugeicons/core-free-icons";
@@ -12,6 +13,9 @@
   import { ReloadIcon } from "@hugeicons/core-free-icons";
   import opor from "./assets/opor-8-bit.png";
   import ketupat from "./assets/ketupat-8-bit.png";
+  import givingMoney from "./assets/giving-money-8-bit.png";
+  import backgroundOrnamentGreen from "./assets/gradient-ornament-green.svg";
+  import backgroundOrnamentGold from "./assets/gradient-ornament-gold.svg";
 
   const haptic = createWebHaptics();
 
@@ -109,16 +113,16 @@
 >
   <Button
     variant="ghost"
-    size="icon-lg"
+    size="icon"
     onclick={openSettings}
     aria-label="Open settings"
-    class="size-12! absolute top-4 right-4 z-10 rounded-full"
+    class="absolute top-3 right-3 z-10"
   >
     <HugeiconsIcon
       icon={Settings03Icon}
       size={20}
       strokeWidth={1.5}
-      class="size-4 sm:size-5"
+      class="size-5"
     />
   </Button>
 
@@ -127,26 +131,32 @@
   {/if}
 
   <div
-    class="w-fit sm:max-w-2xl flex max-sm:flex-col gap-16 p-6 sm:p-10 sm:items-center justify-between rounded-4xl bg-linear-to-br from-amber-300 via-amber-200 to-amber-400 {isShaking
+    class="w-fit sm:max-w-2xl flex max-sm:flex-col gap-10 sm:gap-16 p-6 sm:p-10 sm:items-center justify-between rounded-4xl bg-white border-3 border-white shadow-2xl/10 relative overflow-hidden {isShaking
       ? 'animate-shake'
       : ''}"
-    style="corner-shape: superellipse(-1);"
+      style="corner-shape: superellipse(-1)"
   >
-    <div class="flex flex-col gap-4 max-sm:items-center max-sm:text-center">
+    <img
+      src={backgroundOrnamentGreen}
+      alt="Background ornament"
+      class="absolute -top-39 sm:-top-[255px] sm:-left-[187px] left-1/2 max-sm:-translate-x-1/2"
+    />
+    <img
+      src={backgroundOrnamentGold}
+      alt="Background ornament"
+      class="absolute -bottom-39 sm:-bottom-64 sm:-right-[187px] left-1/2 max-sm:-translate-x-1/2"
+    />
+    <div class="flex flex-col max-sm:items-center max-sm:text-center">
       <img
-        src={ketupat}
-        alt="Ketupat pixel art"
-        class="size-30 animate-float -ml-4"
+        src={givingMoney}
+        alt="Giving money pixel art"
+        class="size-36 animate-float"
       />
       <div class="flex flex-col gap-2">
-        <h1
-          class="text-4xl font-display font-bold bg-linear-to-br text-primary/80"
-        >
+        <h1 class="text-4xl font-display font-bold bg-linear-to-br">
           {greetingInput}
         </h1>
-        <p class="text-sm text-primary/64">
-          Selamat hari raya Idul Fitri 1447 H
-        </p>
+        <p class="text-sm">Selamat hari raya Idul Fitri 1447 H</p>
       </div>
     </div>
 
@@ -199,8 +209,8 @@
     <div
       class="flex flex-col items-center gap-2 mt-6 text-center animate-pop-in"
     >
-      <p class="text-lg font-semibold text-emerald-700">Wooohoooo!</p>
-      <p class="text-sm text-emerald-700/64">
+      <p class="text-lg font-semibold">Wooohoooo!</p>
+      <p class="text-sm text-muted-foreground">
         May Allah shower His blessings on you.
       </p>
       <Button variant="outline" onclick={resetCard} class="mt-6 w-fit">
@@ -214,6 +224,8 @@
     made with opor <img src={opor} alt="Opor pixel art" class="size-4" /> ayam ©
     2026
   </p>
+  <LightRays color="rgba(173, 232, 176, 0.8)" class="-z-1" />
+  <LightRays color="rgba(232, 226, 173, 0.8)" class="-z-1 rotate-180"/>
 </div>
 
 <Drawer.Root bind:open={drawerOpen} shouldScaleBackground>
