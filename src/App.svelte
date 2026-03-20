@@ -331,7 +331,7 @@
               {/if}
             </div>
           </div>
-          <Button size="lg" onclick={saveAndClose}>Simpan</Button>
+          <Button size="lg" onclick={saveAndClose} disabled={amounts.length === 0 ? true : false}>Simpan</Button>
         </div>
       </div>
     </Drawer.Content>
